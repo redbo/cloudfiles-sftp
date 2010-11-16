@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+import eventlet
+eventlet.monkey_patch()
+
 import paramiko
 import cloudfiles
 import mimetypes
@@ -67,7 +70,7 @@ class SFTPServerInterface(paramiko.SFTPServerInterface):
         parts = self._split_path(path)
         if not parts:
             return paramiko.SFTP_PERMISSION_DENIED
-        for y in xrange(len(x)):
+        for y in xrange(len(parts)):
             response = self.conn.make_request('PUT', parts[:y+1], '',
                     {'Content-Type': 'application/directory'})
             if response.status not in (201, 202):
@@ -122,6 +125,7 @@ class Authorization(paramiko.ServerInterface):
     def check_auth_password(self, username, password):
         try:
             self._set_conn(cloudfiles.get_connection(username, password))
+                    # authurl='https://auth.stg.swift.racklabs.com/auth'))
             return paramiko.AUTH_SUCCESSFUL
         except:
             return paramiko.AUTH_FAILED
