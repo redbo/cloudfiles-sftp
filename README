@@ -1,0 +1,3 @@
+Server that uses paramiko and python-cloudfiles to expose
+an sftp interface to Rackspace Cloud Files.
+
